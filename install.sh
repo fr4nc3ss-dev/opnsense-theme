@@ -34,27 +34,58 @@ echo "[3/5] Alterando nome da interface para $NOVO_NOME..."
 find /usr/local/opnsense/www/themes/$NOME_TEMA -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" -o -name "*.json" \) -exec sed -i '' "s/OPNsense/$NOVO_NOME/g" {} +
 find /usr/local/opnsense/www/themes/$NOME_TEMA -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" -o -name "*.json" \) -exec sed -i '' "s/opnsense/$NOVO_NOME/g" {} +
 
-# 4. Substituição Global de Hexadecimais para Tons de Cinza
-echo "[4/5] Aplicando padrão 100% cinza e preto no CSS..."
+# 4. Substituição Global de Hexadecimais Laranjas por Cinza
+echo "[4/5] Removendo todas as tonalidades de laranja..."
 THEME_DIR="/usr/local/opnsense/www/themes/$NOME_TEMA"
 
-find $THEME_DIR -type f \( -name "*.css" -o -name "*.js" \) -exec sed -i '' 's/#EA7105/#444444/gI' {} +
-find $THEME_DIR -type f \( -name "*.css" -o -name "*.js" \) -exec sed -i '' 's/#D95100/#222222/gI' {} +
-find $THEME_DIR -type f \( -name "*.css" -o -name "*.js" \) -exec sed -i '' 's/#B85904/#333333/gI' {} +
-find $THEME_DIR -type f \( -name "*.css" -o -name "*.js" \) -exec sed -i '' 's/#E05D06/#444444/gI' {} +
-find $THEME_DIR -type f \( -name "*.css" -o -name "*.js" \) -exec sed -i '' 's/#E67E22/#555555/gI' {} +
-find $THEME_DIR -type f \( -name "*.css" -o -name "*.js" \) -exec sed -i '' 's/#F39C12/#666666/gI' {} +
+# Varredura ampla de tons de laranja conhecidos do OPNsense
+ORANGES="#EA7105 #D95100 #B85904 #E05D06 #E67E22 #F39C12 #F05A28 #F26522 #FF7A00 #FA6B03 #D9534F"
+for color in $ORANGES; do
+    find $THEME_DIR -type f \( -name "*.css" -o -name "*.js" \) -exec sed -i '' "s/$color/#444444/gI" {} +
+done
 
-# Injeta CSS padronizado em Cinza
+# Injeta regras específicas para neutralizar linhas inferiores de títulos (::after e hr)
 CSS_DIR="$THEME_DIR/build/css"
 for f in $CSS_DIR/*.css; do
 cat << 'EOF' >> "$f"
 
 /* ==========================================
-   PADRONIZAÇÃO TOTAL EM CINZA FW-CYBERAPPFIN
+   ELIMINAÇÃO DE LINHAS DE TÍTULO (CYBERAPPFIN)
    ========================================== */
 
-/* 1. BORDAS DOS DASHBOARDS E WIDGETS (CINZA ESCURO) */
+/* Linhas e bordas de títulos de widgets/painéis */
+.panel-heading,
+.widget-header,
+.widget-title,
+.panel-title,
+div[class*="panel"] h3,
+div[class*="panel"] h4,
+div[class*="widget"] h3,
+div[class*="widget"] h4,
+.content-box h3,
+header h3,
+header h4 {
+    border-bottom-color: #444444 !important;
+}
+
+/* Pseudo-elementos (linhas desenhadas via CSS abaixo do texto) */
+.panel-heading::after,
+.panel-heading::before,
+.widget-header::after,
+.widget-header::before,
+.widget-title::after,
+.widget-title::before,
+.panel-title::after,
+.panel-title::before,
+h3::after, h3::before,
+h4::after, h4::before,
+header::after, header::before,
+hr {
+    background-color: #444444 !important;
+    border-color: #444444 !important;
+}
+
+/* Linhas e bordas dos quadros/cards */
 .panel, 
 .panel-default, 
 .panel-primary, 
@@ -64,17 +95,7 @@ div[class*="widget"],
     border-color: #444444 !important;
 }
 
-.panel-heading, 
-.widget-header, 
-div[class*="panel"] > h3, 
-div[class*="panel"] hr, 
-.panel-title, 
-hr {
-    border-top: 2px solid #444444 !important;
-    border-bottom-color: #444444 !important;
-}
-
-/* 2. MENU LATERAL E SELEÇÕES */
+/* Menu lateral e seleções */
 .sidebar-nav li a.active,
 .sidebar-nav li.active > a,
 .navigation-menu .active > a {
@@ -83,12 +104,8 @@ hr {
     color: #000000 !important;
 }
 
-/* 3. BOTÕES PRIMÁRIOS E AÇÕES */
+/* Botões e Ações */
 .btn-primary, 
-.btn-primary:focus, 
-.btn-primary:active, 
-.btn-primary.active,
-.open > .dropdown-toggle.btn-primary,
 button[type="submit"] {
     background-color: #333333 !important;
     border-color: #222222 !important;
@@ -99,37 +116,23 @@ button[type="submit"] {
 button[type="submit"]:hover {
     background-color: #444444 !important;
     border-color: #333333 !important;
-    color: #ffffff !important;
 }
 
-/* 4. PAGINAÇÃO E ABAS */
+/* Paginação e Abas */
 .pagination > .active > a, 
 .pagination > .active > span {
     background-color: #333333 !important;
     border-color: #222222 !important;
-    color: #ffffff !important;
 }
 
-.pagination > li > a, .pagination > li > span {
-    color: #333333 !important;
-}
-
-.nav-tabs > li.active > a, 
-.nav-tabs > li.active > a:hover, 
-.nav-tabs > li.active > a:focus {
+.nav-tabs > li.active > a {
     border-top: 3px solid #444444 !important;
     color: #000000 !important;
 }
 
-/* 5. TEXTOS, LINKS E GRÁFICOS SVG */
+/* Cores de texto padrão */
 a, .text-primary, .text-danger, .text-warning, .text-info {
     color: #333333 !important;
-}
-
-svg path[fill="#EA7105"], svg path[fill="#ea7105"],
-svg path[fill="#D95100"], svg path[fill="#d95100"],
-svg path[fill="#e67e22"], svg path[fill="#f39c12"] {
-    fill: #555555 !important;
 }
 
 EOF
