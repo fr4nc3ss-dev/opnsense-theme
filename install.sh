@@ -34,18 +34,60 @@ echo "[3/5] Alterando nome da interface para $NOVO_NOME..."
 find /usr/local/opnsense/www/themes/$NOME_TEMA -type f \( -name "*.html" -o -name "*.css" -o -name "*.json" \) -exec sed -i '' "s/OPNsense/$NOVO_NOME/g" {} +
 find /usr/local/opnsense/www/themes/$NOME_TEMA -type f \( -name "*.html" -o -name "*.css" -o -name "*.json" \) -exec sed -i '' "s/opnsense/$NOVO_NOME/g" {} +
 
-# 4. Alterar a cor Laranja para PRETO nos arquivos CSS
-echo "[4/5] Modificando a cor dos botoes (Laranja -> Preto)..."
+# 4. Modificar cores e Injetar Regras CSS
+echo "[4/5] Aplicando botoes em Cinza Escuro e linhas em Preto..."
 CSS_DIR="/usr/local/opnsense/www/themes/$NOME_TEMA/build/css"
 
-sed -i '' 's/EA7105/1a1a1a/gI' $CSS_DIR/*.css
-sed -i '' 's/ea7105/1a1a1a/gI' $CSS_DIR/*.css
-sed -i '' 's/D95100/111111/gI' $CSS_DIR/*.css
-sed -i '' 's/d95100/111111/gI' $CSS_DIR/*.css
-sed -i '' 's/b85904/333333/gI' $CSS_DIR/*.css
-sed -i '' 's/9c3a00/000000/gI' $CSS_DIR/*.css
-sed -i '' 's/ED9A50/444444/gI' $CSS_DIR/*.css
-sed -i '' 's/fedcbd/555555/gI' $CSS_DIR/*.css
+# Injeta a sobrescrita de estilos no final dos arquivos CSS
+for f in $CSS_DIR/*.css; do
+cat << 'EOF' >> "$f"
+
+/* ==========================================
+   CUSTOMIZACAO FW-CYBERAPPFIN
+   ========================================== */
+
+/* Botoes em Cinza Escuro */
+.btn-primary, 
+.btn-primary:focus, 
+.btn-primary:active, 
+.btn-primary.active,
+button[type="submit"] {
+    background-color: #333333 !important;
+    border-color: #1a1a1a !important;
+    color: #ffffff !important;
+}
+
+.btn-primary:hover,
+button[type="submit"]:hover {
+    background-color: #1a1a1a !important;
+    border-color: #000000 !important;
+    color: #ffffff !important;
+}
+
+/* Linhas superiores dos quadros/widgets em Preto */
+.panel-primary > .panel-heading,
+.panel-default > .panel-heading,
+.panel-heading,
+.widget-header,
+h3, h4, hr {
+    border-color: #000000 !important;
+    border-top-color: #000000 !important;
+}
+
+div[class*="panel"], div[class*="widget"] {
+    border-top-color: #000000 !important;
+}
+
+/* Textos e links destacados em Cinza Escuro */
+a, .text-primary, .text-danger {
+    color: #333333 !important;
+}
+
+a:hover, a:focus {
+    color: #000000 !important;
+}
+EOF
+done
 
 # 5. Ajustar permissões
 echo "[5/5] Ajustando permissoes do sistema..."
