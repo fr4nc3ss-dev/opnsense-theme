@@ -34,11 +34,10 @@ echo "[3/5] Alterando nome da interface para $NOVO_NOME..."
 find /usr/local/opnsense/www/themes/$NOME_TEMA -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" -o -name "*.json" \) -exec sed -i '' "s/OPNsense/$NOVO_NOME/g" {} +
 find /usr/local/opnsense/www/themes/$NOME_TEMA -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" -o -name "*.json" \) -exec sed -i '' "s/opnsense/$NOVO_NOME/g" {} +
 
-# 4. Substituição Global de Hexadecimais de Laranja por Cinza/Preto
-echo "[4/5] Removendo laranjas e aplicando bordas em Vermelho Forte..."
+# 4. Substituição Global de Hexadecimais para Tons de Cinza
+echo "[4/5] Aplicando padrão 100% cinza e preto no CSS..."
 THEME_DIR="/usr/local/opnsense/www/themes/$NOME_TEMA"
 
-# Varre arquivos trocando tons de laranja por tons cinza no layout e gráficos
 find $THEME_DIR -type f \( -name "*.css" -o -name "*.js" \) -exec sed -i '' 's/#EA7105/#444444/gI' {} +
 find $THEME_DIR -type f \( -name "*.css" -o -name "*.js" \) -exec sed -i '' 's/#D95100/#222222/gI' {} +
 find $THEME_DIR -type f \( -name "*.css" -o -name "*.js" \) -exec sed -i '' 's/#B85904/#333333/gI' {} +
@@ -46,23 +45,23 @@ find $THEME_DIR -type f \( -name "*.css" -o -name "*.js" \) -exec sed -i '' 's/#
 find $THEME_DIR -type f \( -name "*.css" -o -name "*.js" \) -exec sed -i '' 's/#E67E22/#555555/gI' {} +
 find $THEME_DIR -type f \( -name "*.css" -o -name "*.js" \) -exec sed -i '' 's/#F39C12/#666666/gI' {} +
 
-# Injeta CSS de sobrescrita direta
+# Injeta CSS padronizado em Cinza
 CSS_DIR="$THEME_DIR/build/css"
 for f in $CSS_DIR/*.css; do
 cat << 'EOF' >> "$f"
 
 /* ==========================================
-   SOBRESCRIÇÃO TOTAL FW-CYBERAPPFIN
+   PADRONIZAÇÃO TOTAL EM CINZA FW-CYBERAPPFIN
    ========================================== */
 
-/* 1. BORDAS DOS DASHBOARDS / WIDGETS EM VERMELHO FORTE */
+/* 1. BORDAS DOS DASHBOARDS E WIDGETS (CINZA ESCURO) */
 .panel, 
 .panel-default, 
 .panel-primary, 
 div[class*="panel"], 
 div[class*="widget"], 
 .content-box {
-    border-color: #cc0000 !important;
+    border-color: #444444 !important;
 }
 
 .panel-heading, 
@@ -71,16 +70,16 @@ div[class*="panel"] > h3,
 div[class*="panel"] hr, 
 .panel-title, 
 hr {
-    border-top: 2px solid #cc0000 !important;
-    border-bottom-color: #cc0000 !important;
+    border-top: 2px solid #444444 !important;
+    border-bottom-color: #444444 !important;
 }
 
-/* 2. MENU LATERAL E BARRAS EM CINZA/PRETO */
+/* 2. MENU LATERAL E SELEÇÕES */
 .sidebar-nav li a.active,
 .sidebar-nav li.active > a,
 .navigation-menu .active > a {
     border-left: 4px solid #333333 !important;
-    background-color: #e0e0e0 !important;
+    background-color: #e5e5e5 !important;
     color: #000000 !important;
 }
 
@@ -91,23 +90,23 @@ hr {
 .btn-primary.active,
 .open > .dropdown-toggle.btn-primary,
 button[type="submit"] {
-    background-color: #222222 !important;
-    border-color: #111111 !important;
+    background-color: #333333 !important;
+    border-color: #222222 !important;
     color: #ffffff !important;
 }
 
 .btn-primary:hover,
 button[type="submit"]:hover {
     background-color: #444444 !important;
-    border-color: #222222 !important;
+    border-color: #333333 !important;
     color: #ffffff !important;
 }
 
-/* 4. PAGINAÇÃO E ABAS EM CINZA/PRETO */
+/* 4. PAGINAÇÃO E ABAS */
 .pagination > .active > a, 
 .pagination > .active > span {
-    background-color: #222222 !important;
-    border-color: #111111 !important;
+    background-color: #333333 !important;
+    border-color: #222222 !important;
     color: #ffffff !important;
 }
 
@@ -118,16 +117,15 @@ button[type="submit"]:hover {
 .nav-tabs > li.active > a, 
 .nav-tabs > li.active > a:hover, 
 .nav-tabs > li.active > a:focus {
-    border-top: 3px solid #333333 !important;
+    border-top: 3px solid #444444 !important;
     color: #000000 !important;
 }
 
-/* 5. TEXTOS, LINKS, ANÚNCIOS E GAUGE GRÁFICOS EM CINZA */
+/* 5. TEXTOS, LINKS E GRÁFICOS SVG */
 a, .text-primary, .text-danger, .text-warning, .text-info {
     color: #333333 !important;
 }
 
-/* Força troca de cor em elementos SVG de gráficos */
 svg path[fill="#EA7105"], svg path[fill="#ea7105"],
 svg path[fill="#D95100"], svg path[fill="#d95100"],
 svg path[fill="#e67e22"], svg path[fill="#f39c12"] {
